@@ -73,8 +73,8 @@ if (rf12_recvDone()){
  //8 = 349  ohms 16A zcw says it should be 348 ohms
  //18 = 729 ohms 32A zcw says it should be 732 ohms
  
-digitalPotWrite(3,0);
-digitalPotWrite(1,0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
+digitalPotWrite(3,8);
+digitalPotWrite(1,8); // the jumper must be set in the board but this halves the value so needs adjustment to suit
 
 }
 }
