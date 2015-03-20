@@ -13,8 +13,8 @@ const int slaveSelectPin = 6; // Slave Select Pin To talk to the AD5206 digital 
 typedef struct { int power1, power2, power3, power4, Vrms, temp; } PayloadTX; //standard stuff in emontx, we only care about solar on 2/4
 PayloadTX emontx;  // stand emon stuff
 const int emonTx_NodeID=9; //emonTx3 node ID default is 10 mine is 9
-unsigned long time;
-unsigned long times;
+unsigned long currentTime;
+unsigned long previousTime;
 int cloud = 10;
 void setup() {
 rf12_initialize(myNodeID,RF_freq,network);   //Initialize RFM12 Radio with settings as defined above
@@ -40,7 +40,7 @@ void digitalPotWrite(int address, int value) {
   digitalWrite(slaveSelectPin,HIGH); 
 }  
 void loop() {
-time = millis(); //Time = Milli since controller switch on. Reset approx 50 days.
+currentTime = millis(); //Time = Milli since controller switch on. Reset approx 50 days.
 if (rf12_recvDone()){    
   if (rf12_crc == 0 && (rf12_hdr & RF12_HDR_CTL) == 0)
   {
@@ -52,8 +52,9 @@ if (rf12_recvDone()){
        Serial.println(" "); 
        
        if (emontx.power2+emontx.power4 < 1600){ // If Solar is less than 1600w set the pot to 0 ohms switching off charging
-       times = millis();
-       if (time = times + 300000) // If Solar is less than 1600w set the pot to 0 ohms switching off charging
+       previousTime= millis();
+       if (currentTime - previousTime > 300000) // If Solar is less than 1600w set the pot to 0 ohms switching off charging
+       previousTime;
        digitalPotWrite(3,0);
        digitalPotWrite(1,0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
        if (emontx.power2+emontx.power4 > 1600 < 3300 ){ // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
@@ -73,8 +74,8 @@ if (rf12_recvDone()){
  //8 = 349  ohms 16A zcw says it should be 348 ohms
  //18 = 729 ohms 32A zcw says it should be 732 ohms
  
-digitalPotWrite(3,8);
-digitalPotWrite(1,8); // the jumper must be set in the board but this halves the value so needs adjustment to suit
+digitalPotWrite(3,0);
+digitalPotWrite(1,0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
 
 }
 }
